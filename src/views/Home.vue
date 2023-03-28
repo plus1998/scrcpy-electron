@@ -41,6 +41,13 @@ const connect = async (record: any) => {
     }
 }
 
+const tcpip = async (record: any) => {
+    const res = await ipcRenderer.invoke('tcpip', { host: record.host, title: record.remark })
+    const { success, message } = res;
+    console.log(success, message)
+    AMessage[success ? 'success' : 'error'](message)
+}
+
 const setRemark = (record: any) => {
     localStorage.setItem(`REMARK:${record.host}`, record.remark)
     AMessage.success('设置成功')
@@ -139,7 +146,7 @@ watch(
 
 const successCount = ref(0)
 const installLoading = ref(false)
-const targetDir = ref('/sdcard/脚本/')
+const targetDir = ref('/sdcard/')
 const confirmInstall = async () => {
     successCount.value = 0
     installLoading.value = true;
@@ -177,12 +184,12 @@ ipcRenderer.on('install-msg', (e: any, data: any) => {
                     <a-col :span="5">
                         <a-input-group compact>
                             <a-input v-model:value="address" style="width: calc(100% - 100px)" placeholder="IP地址" />
-                            <a-button type="primary" @click="wirelessConnect">ADB连接
+                            <a-button type="primary" @click="wirelessConnect">TCP连接
                             </a-button>
                         </a-input-group>
                     </a-col>
                     <a-col :span="19">
-                        <a-button type="primary" @click="isShowSelect = true">批量安装/推送
+                        <a-button type="primary" @click="isShowSelect = true">文件推送
                         </a-button>
                     </a-col>
                 </a-row>
@@ -192,7 +199,8 @@ ipcRenderer.on('install-msg', (e: any, data: any) => {
                 <template #description>
                     <div>
                         点击返回键 <a-tag>Alt + B</a-tag>,
-                        点击Home键 <a-tag>Alt + H</a-tag>
+                        点击Home键 <a-tag>Alt + H</a-tag>,
+                        点击Power键 <a-tag>Alt + P</a-tag>
                     </div>
                 </template>
             </a-alert>
@@ -214,17 +222,19 @@ ipcRenderer.on('install-msg', (e: any, data: any) => {
                 <a-form>
                     <a-form-item :colon="false" label="">
                         <a-row>
-                            <a-col :span="12">
+                            <a-col :span="8">
+                                <a-button style="width: 95%" size="small" @click="tcpip(record)"
+                                    :disabled="deviceStatus[record.host]">TCP</a-button>
+                            </a-col>
+                            <a-col :span="8">
                                 <a-button style="width: 95%" size="small" :type="record.display ? 'danger' : 'primary'"
                                     @click="switchDisplay(record)">{{
-                                            record.display ? '断开画面' : '连接画面'
+                                            record.display ? '关闭' : '打开'
                                     }}</a-button>
                             </a-col>
-                            <a-col :span="12">
+                            <a-col :span="8">
                                 <a-button style="width: 95%" size="small" type="primary" @click="connect(record)"
-                                    :disabled="deviceStatus[record.host]">{{
-                                            deviceStatus[record.host] ? '控制中' : '连接控制'
-                                    }}</a-button>
+                                    :disabled="deviceStatus[record.host]">控制</a-button>
                             </a-col>
                         </a-row>
                     </a-form-item>
@@ -236,7 +246,7 @@ ipcRenderer.on('install-msg', (e: any, data: any) => {
                 <a-upload-dragger v-model:fileList="fileList" name="file" action="#" :customRequest="handleChange">
                     <p class="ant-upload-text">点击或者拖拽文件到此处</p>
                     <p class="ant-upload-hint">
-                        APK文件会安装、其他会推送到设备上
+                        所有文件都会推送到设备sdcard根目录上
                     </p>
                 </a-upload-dragger>
             </div>
@@ -250,11 +260,10 @@ ipcRenderer.on('install-msg', (e: any, data: any) => {
             <a-divider />
             <a-checkbox-group v-model:value="state.checkedList" :options="state.plainOptions" />
             <div style="margin-top: 35px" v-if="fileList[0]">
-                <div style="margin-bottom: 15px" v-if="!fileList[0].name.endsWith('.apk')">推送路径：<a-input
+                <div style="margin-bottom: 15px">推送路径：<a-input
                         v-model:value="targetDir" /></div>
                 <a-button type="primary" @click="confirmInstall" :loading="installLoading"
-                    :disabled="!state.checkedList.length || !apk">{{ fileList[0].name.endsWith('.apk') ? '安装' : '推送'
-                    }}</a-button>
+                    :disabled="!state.checkedList.length || !apk">推送</a-button>
             </div>
             <a-divider />
             <div v-for="item in installMsg">{{ item.host }}: {{ item.msg }}</div>

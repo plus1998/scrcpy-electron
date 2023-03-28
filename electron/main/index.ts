@@ -137,6 +137,12 @@ ipcMain.handle('scrcpy', (e, data) => {
   return { success: true, message: '启动成功' }
 })
 
+ipcMain.handle('tcpip', (e, data) => {
+  console.log(data)
+  cp.execSync(`adb -s ${data.host} tcpip 5555`)
+  return { success: true, message: 'tcpip 5555' }
+})
+
 ipcMain.handle('adb-connect', (e, data) => {
   console.log(data)
   return { success: true, message: cp.execSync(`adb connect ${data.host}`).toString() }
@@ -146,19 +152,11 @@ ipcMain.handle('adb-install', (e, data) => {
   console.log(data)
   const { apk, hosts, targetDir } = data;
   for (const host of hosts) {
-    if (apk.endsWith('apk')) {
-      win.webContents.send('install-msg', { host, msg: '开始安装' })
-      cp.exec(`adb -s ${host} install ${apk}`, (err, stdout, stderr) => {
-        console.log(`adb install`, stdout, stderr)
-        win.webContents.send('install-msg', { host, msg: stdout.toString() })
-      })
-    } else {
-      win.webContents.send('install-msg', { host, msg: '开始推送' })
-      cp.exec(`adb -s ${host} push ${apk} ${targetDir}`, (err, stdout, stderr) => {
-        console.log(`adb push`, stdout, stderr)
-        win.webContents.send('install-msg', { host, msg: stdout.toString() })
-      })
-    }
+    win.webContents.send('install-msg', { host, msg: '开始推送' })
+    cp.exec(`adb -s ${host} push ${apk} ${targetDir}`, (err, stdout, stderr) => {
+      console.log(`adb push`, stdout, stderr)
+      win.webContents.send('install-msg', { host, msg: stdout.toString() })
+    })
   }
   return { success: true, message: '已发送指令' }
 })
