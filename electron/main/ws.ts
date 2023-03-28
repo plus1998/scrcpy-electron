@@ -29,7 +29,7 @@ const connectScrcpyServer = async (device, ws) => {
             // raw_video_stream=true 原生h264流
             cp.exec(`${adb} -s ${device} shell CLASSPATH=/data/local/tmp/scrcpy-server.jar \
                     app_process / com.genymobile.scrcpy.Server 1.24 \
-                    raw_video_stream=true tunnel_forward=true control=false`, (error3, stderr3, stdout3) => {
+                    raw_video_stream=true tunnel_forward=true control=false video_bit_rate=1000 max_fps=5`, (error3, stderr3, stdout3) => {
                 console.log('scrcpy-server stop', port)
                 freePorts.push(port)
             })
