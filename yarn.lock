@@ -431,10 +431,10 @@ ansi-styles@^4.0.0, ansi-styles@^4.1.0:
   dependencies:
     color-convert "^2.0.1"
 
-ant-design-vue@^3.2.12:
-  version "3.2.12"
-  resolved "https://registry.npmjs.org/ant-design-vue/-/ant-design-vue-3.2.12.tgz"
-  integrity sha512-CPsoWJ3t+sqq/EPINPXb4fC5/9iKkUdYOfK9M9kLKbXlRN3MAoVwWUbaFnUqc+ngtbEpn/d69hTF/Eh7MeWMhQ==
+ant-design-vue@^3.2.16:
+  version "3.2.16"
+  resolved "https://registry.yarnpkg.com/ant-design-vue/-/ant-design-vue-3.2.16.tgz#d79209537f93d6b87edff712b9cd50fbbea128bc"
+  integrity sha512-kBGxk4csoEi2iaWO62DpNECTnBLIf/CNYW8RdNjLPWo6TBWLQNqLchxRcg8KatOkDRpdWRaqdqeD5P+F6MDC3Q==
   dependencies:
     "@ant-design/colors" "^6.0.0"
     "@ant-design/icons-vue" "^6.1.0"
