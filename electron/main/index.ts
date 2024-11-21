@@ -14,9 +14,9 @@ import { release } from 'os'
 import { join } from 'path'
 import cp from 'child_process'
 import * as ws from './ws'
-import * as fixPath from 'fix-path'
+import fixPath from 'fix-path';
 
-fixPath['default']()
+fixPath()
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
